@@ -42,7 +42,7 @@ def login(inline_object=None):
 
             return Response(
                 status=204,
-                headers={'Set-Cookie': f'session_id={session_id}; Expires={datetime.datetime.fromtimestamp(expiry).strftime("%c")}'}
+                headers={'Set-Cookie': f'session_id={session_id}; Expires={datetime.datetime.fromtimestamp(expiry).strftime("%c")}; secure; httponly'}
             )
         else:
             print(payload)

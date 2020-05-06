@@ -20,7 +20,8 @@ async def updater(websocket, path):
     print(f"< Received session id: {session_id}")
 
     with engine.connect() as connection:
-        query_result = connection.execute("select user, expire_after from session where id=%(session)s", {"session": session_id}).fetchone()
+        query_result = connection.execute("select user, expire_after from session where id=%(session)s",
+                                          {"session": session_id}).fetchone()
         if query_result is not None:
             user, expire_after = query_result
 
@@ -48,16 +49,15 @@ def notification_listener():
             notifications[msg['target']].append(msg)
 
 
-if __name__ == '__main__':
+def main():
     n = threading.Thread(target=notification_listener)
     n.daemon = True
     n.start()
 
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    ssl_context.load_cert_chain('/home/daithi/Documents/College/Fourth Year/Final Year Project/norton/certs/fullchain.pem', '/home/daithi/Documents/College/Fourth Year/Final Year Project/norton/certs/privkey.pem')
-    # localhost_pem = '/home/daithi/Documents/College/Fourth Year/Final Year Project/norton/certs/fullchain.pem' #pathlib.Path(__file__) / 'ca' / 'privkey.pem'
-    # ssl_context.load_cert_chain(localhost_pem)
-
-    start_server = websockets.serve(updater, "localhost", 8765, ssl=ssl_context)
+    start_server = websockets.serve(updater, "localhost", 8765)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
+
+
+if __name__ == '__main__':
+    main()
